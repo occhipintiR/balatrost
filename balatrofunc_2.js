@@ -226,7 +226,7 @@ checkboxes.forEach(function(checkbox) {
 
 // Swap Track Button Functionality
 swapper.addEventListener("click", ()=>{
-    if(!swapOnCooldown  && !player.paused && (enabledTracks.length>1 || currentTrackID != enabledTracks[0])){
+    if(!swapOnCooldown  && !player.paused && (enabledTracks.length>1 || (currentTrackID != enabledTracks[0] && enabledTracks.length != 0))){
         console.log("swapEvent Disabled");
         clearTimeout(swapEvent);
         swapTracks();

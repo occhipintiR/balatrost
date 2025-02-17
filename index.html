@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Balatrost Player</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="allstyles.css" rel="stylesheet">
+<link href="nouislider.min.css" rel="stylesheet">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+  height: 100%;
+  color: #777;
+  line-height: 1.8;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1{
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+  background-image: url('https://preview.redd.it/balatro-main-menu-image-without-ui-elements-v0-yl1be0ojeevc1.jpg?width=2560&format=pjpg&auto=webp&s=58e6d55652cc252b1968c3d1df6b37c1a8162011');
+  min-height: 100%;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1600px) {
+  .bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: scroll;
+    min-height: 400px;
+  }
+}
+</style>
+</head>
+<body>
+
+
+<!-- First Parallax Image with Logo Text -->
+<div class="bgimg-1 w3-opacity-min parent" id="home">
+	<button id="play" class="button w3-black w3-xlarge w3-wide w3-hover-grayscale w3-hover-red">
+    <div class="inner-element"> PLAY
+    </div>
+  </button> 
+  <div class="w3-display-middle">
+  	<div id="volSlider" class="relative">
+  		<input type="range" min="0" max="1" step="0.01" value="0.5" id="volume-slider"> </input>
+  	</div>
+  	<div id="volSliderText" class="relative"> Volume
+  	</div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Containers for themes -->
+<div class="sliderContainer">
+	<button id=swapper class="w3-center w3-padding-large">Swap Track</button>
+	<div class="w3-content w3-container w3-padding-64" id="ConMain">
+	<h3 class="w3-center" style = "padding-bottom:40px">
+	<form action="/action_page.php">
+		<div class="checkbox-wrapper-42">
+  		<input id="checkMain" type="checkbox" value="0" checked="true"/>
+  		<label class="cbx" for="checkMain"></label>
+  		<label class="lbl" for="checkMain">Main Theme</label>
+		</div>
+	</form>
+	</h3>
+	<div id="sliderMain" class="hidetooltip" value="0"> </div>
+ </div>
+
+	<div class="w3-content w3-container w3-padding-64" id="ConShop">
+	<h3 class="w3-center" style = "padding-bottom:40px">
+	<form action="/action_page.php">
+		<div class="checkbox-wrapper-42">
+  		<input id="checkShop" type="checkbox" value="1"/>
+  		<label class="cbx" for="checkShop"></label>
+  		<label class="lbl" for="checkShop">Shop Theme</label>
+		</div>
+	</form>
+	</h3>
+	<div id="sliderShop" class="hidetooltip" value="1"> </div>
+ </div>
+
+	<div class="w3-content w3-container w3-padding-64" id="ConTarot">
+	<h3 class="w3-center" style = "padding-bottom:40px">
+	<form action="/action_page.php">
+		<div class="checkbox-wrapper-42">
+  		<input id="checkTarot" type="checkbox" value="2"/>
+  		<label class="cbx" for="checkTarot"></label>
+  		<label class="lbl" for="checkTarot">Tarot Theme</label>
+		</div>
+	</form>
+	</h3>
+	<div id="sliderTarot" class="hidetooltip" value="2"> </div>
+ </div>
+
+	<div class="w3-content w3-container w3-padding-64" id="ConPlanet">
+	<h3 class="w3-center" style = "padding-bottom:40px">
+	<form action="/action_page.php">
+		<div class="checkbox-wrapper-42">
+  		<input id="checkPlanet" type="checkbox" value="3"/>
+  		<label class="cbx" for="checkPlanet"></label>
+  		<label class="lbl" for="checkPlanet">Planet Theme</label>
+		</div>
+	</form>
+	</h3>
+	<div id="sliderPlanet" class="hidetooltip" value="3"> </div>
+ </div>
+
+	<div class="w3-content w3-container w3-padding-64" id="ConBoss">
+	<h3 class="w3-center" style = "padding-bottom:40px">
+	<form action="/action_page.php">
+		<div class="checkbox-wrapper-42">
+  		<input id="checkBoss" type="checkbox" value="4"/>
+  		<label class="cbx" for="checkBoss"></label>
+  		<label class="lbl" for="checkBoss">Boss Theme</label>
+		</div>
+	</form>
+	</h3>
+	<div id="sliderBoss" class="hidetooltip" value="4"> </div>
+ </div>
+</div>
+
+
+
+
+
+
+<div>
+	<audio id="aMain" src="main.mp3" loop="true"></audio>
+	<audio id="aShop" src="shop.mp3" loop="true"></audio>
+	<audio id="aTarot" src="tarot.mp3" loop="true"></audio>
+	<audio id="aPlanet" src="planet.mp3" loop="true"></audio>
+	<audio id="aBoss" src="boss.mp3" loop="true"></audio>
+</div>
+
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding-64 w3-hover-opacity-off">
+  <a href="#home" class="w3-button w3-light-grey"><i class="fa fa-arrow-up w3-margin-right"></i>To the top</a>
+  <div class="w3-xlarge w3-section">
+    <i class="fa fa-youtube w3-hover-opacity"></i>
+  </div>
+  <p>Built with the help of <a href="https://www.w3schools.com/" title="W3" target="_blank" class="w3-hover-text-green">w3</a> and <a href="https://refreshless.com/nouislider/" target="_blank" class="w3-hover-text-green">noUiSlider</p>
+</footer>
+ 
+<script>
+// Modal Image Gallery
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+  var captionText = document.getElementById("caption");
+  captionText.innerHTML = element.alt;
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function toggleFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+
+<script type="text/javascript">
+    
+    function settime(){
+      var audio= document.getElementById("myaudio");
+      audio.currentTime=0;
+      audio.play();
+      
+    }
+
+</script>
+
+<script src="nouislider.min.js"></script>
+<script src="balatrofunc_2.js"></script>
+</body>
+</html>

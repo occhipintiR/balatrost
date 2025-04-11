@@ -9,6 +9,19 @@ const aTarot = document.getElementById("aTarot");
 const aPlanet = document.getElementById("aPlanet");
 const aBoss = document.getElementById("aBoss");
 
+//Preload audio elements
+aMain.preload = "auto";
+aShop.preload = "auto";
+aTarot.preload = "auto";
+aPlanet.preload = "auto";
+aBoss.preload = "auto";
+
+aMain.volume = 0;
+aShop.volume = 0;
+aTarot.volume = 0;
+aPlanet.volume = 0;
+aBoss.volume = 0;
+
 const trackList = [aMain, aShop, aTarot, aPlanet, aBoss];
 
 var checkboxes = document.querySelectorAll("input[type=checkbox]");
@@ -136,55 +149,83 @@ debugReportVar = setInterval(debugReport,debugTimer*1000);
 
 //Play/Pause button functionality
 playPauseButton.addEventListener("click", ()=>{
-  if (player.paused) {                              // check if the player is paused
-    if(enabledTracks.length == 0){
-        alert("Please Select At Least One Track!");
-        return;
+    // Check state of players  
+    if (player.paused) {
+        // Put player on cooldown to prevent bugs
+        swapOnCooldown = true;
+
+        // Check if there are any enabled tracks
+        if(enabledTracks.length == 0){
+            // If no enabled tracks, alert user
+            alert("Please Select At Least One Track!");
+            return;
+        }
+
+        // If it is the first play, set the current track to the first enabled track
+        if(firstPlay){
+            currentTrack = trackList[enabledTracks[0]];
+            firstPlay = false;
+        }
+
+        // Start playing the current track
+        currentTrack.play();
+
+        // Fade in the track
+        var newVolume_local = 0;
+        doTimer(1000, 10,
+            //Fade in over 1 second
+            function()
+            {
+                newVolume_local = newVolume_local + volumeSlider.value/10;
+                currentTrack.volume = Math.min(newVolume_local,volumeSlider.value);
+            },
+            //Ensure the proper volume is reached by the end of the second
+            function()
+            {
+                currentTrack.volume   = volumeSlider.value;
+            });
+
+        
+        
+        // Why did I write this? It swaps tracks if the current track is not the first track in the enabled track. Commented out for now.
+        /*        
+        if(currentTrackID != enabledTracks[0]){
+            swapTracks();
+        }
+        */
+    
+        // If there is more than one track enabled, set up a swap event based on the current track's swap time range
+        if(enabledTracks.length>1){
+            console.log("swapEvent Enabled, Current Track: " + trackList[currentTrackID].currentSrc);
+            // Pull a random swap time from the current track's range
+            var tempSwapTime = getRandomTime(currentTrackID);
+            console.log("With swap time (minutes) = " + tempSwapTime/60000);
+            swapEvent = setTimeout(swapTracks, tempSwapTime);     // Start a swap event timer
+        }
+
+        // Update button text to say "Pause"
+        playPauseButton.textContent = "Pause";          
+
+        // Cooldown for 0.5 seconds before allowing another pause
+        dummy = setTimeout(function(){
+            swapOnCooldown = false;
+        }, 500);
+        
+    } else {
+        // If the player is not paused, pause all tracks
+        aMain.pause();
+        aShop.pause();
+        aTarot.pause();
+        aPlanet.pause();
+        aBoss.pause();
+
+        // Stop any swap events
+        clearTimeout(swapEvent);
+        console.log("swapEvent Disabled");
+
+        // Update button text to "Play"
+        playPauseButton.textContent = "Play";           
     }
-    aMain.volume = 0;
-    aShop.volume = 0;
-    aTarot.volume = 0;
-    aPlanet.volume = 0;
-    aBoss.volume = 0;
-    aMain.play();
-    aShop.play();
-    aTarot.play();
-    aPlanet.play();
-    aBoss.play();
-    if(firstPlay){
-        currentTrack = trackList[enabledTracks[0]];
-        firstPlay = false;
-    }
-    var newVolume = 0;
-    doTimer(1000, 10, function()
-    {
-        newVolume = newVolume + volumeSlider.value/10;
-        currentTrack.volume = Math.min(newVolume,volumeSlider.value);
-    },
-    function()
-    {
-        currentTrack.volume   = volumeSlider.value;
-    });
-    playPauseButton.textContent = "Pause";          // Update button text to "Pause"       
-    if(currentTrackID != enabledTracks[0]){
-        swapTracks();
-    }
-    if(enabledTracks.length>1){
-        console.log("swapEvent Enabled");
-        var tempSwapTime = getRandomTime(currentTrackID);
-        console.log("With swap time = " + tempSwapTime);
-        swapEvent = setTimeout(swapTracks, tempSwapTime);     // Start a swap event timer
-    }
-  } else {
-    aMain.pause();
-    aShop.pause();
-    aTarot.pause();
-    aPlanet.pause();
-    aBoss.pause();
-    playPauseButton.textContent = "Play";           // Update button text to "Play"
-    console.log("swapEvent Disabled");
-    clearTimeout(swapEvent);
-  }
 });
 
 // Volume slider functionality
@@ -192,8 +233,8 @@ volumeSlider.addEventListener("input", () => {
   player.volume = volumeSlider.value;               //Set player volume to slider value (0 -> 1)
 });
 
-// Slider Functionality
-sliderMain.noUiSlider.on('end', () => readSlider(sliderMain,0))    //When main slider is moved, run readSliderMain
+// Track playtime range slider functionality
+sliderMain.noUiSlider.on('end', () => readSlider(sliderMain,0))    
 sliderShop.noUiSlider.on('end', () => readSlider(sliderShop,1))
 sliderTarot.noUiSlider.on('end', () => readSlider(sliderTarot,2))
 sliderPlanet.noUiSlider.on('end', () => readSlider(sliderPlanet,3))
@@ -227,16 +268,24 @@ checkboxes.forEach(function(checkbox) {
 // Swap Track Button Functionality
 swapper.addEventListener("click", ()=>{
     if(!swapOnCooldown  && !player.paused && (enabledTracks.length>1 || (currentTrackID != enabledTracks[0] && enabledTracks.length != 0))){
-        console.log("swapEvent Disabled");
-        clearTimeout(swapEvent);
-        swapTracks();
+        // Put the swap tracks button on cooldown to prevent bugs
         swapOnCooldown = true;
+        
+        // Clear any exisiting swap events
+        clearTimeout(swapEvent);
+        console.log("swapEvent Disabled");
+
+        // Swap tracks immediately
+        swapTracks();
+
         if(enabledTracks.length>1){
             var tempSwapTime = getRandomTime(currentTrackID);
             console.log("swapEvent Enabled");
             console.log("With swap time = " + tempSwapTime);
             swapEvent = setInterval(swapTracks, tempSwapTime);
         }
+
+        // Cooldown for 2.4 seconds before allowing another swap
         dummy = setTimeout(function(){
             swapOnCooldown = false;
         }, 2400);

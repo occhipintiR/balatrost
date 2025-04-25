@@ -220,6 +220,10 @@ playPauseButton.addEventListener("click", ()=>{
         aBoss.pause();
 
         // Stop any swap events
+        // Just gonna be honest, sometimes there are multiple swap events happening and I don't know why. Maybe this will fix that.
+        clearTimeout(swapEvent);
+        clearTimeout(swapEvent);
+        clearTimeout(swapEvent);
         clearTimeout(swapEvent);
         console.log("swapEvent Disabled");
 
@@ -302,16 +306,18 @@ function swapTracks(){
     console.log("Switching");
     let selectedTrackID = 0
     if(enabledTracks.length == 1){
-        console.log("One Track");
+        console.log("One Track Enabled: " + enabledTracks[0]);
         selectedTrackID = enabledTracks[0];
     } else {
-        console.log("Multiple Tracks");
+        console.log("Multiple Tracks Enabled: " + enabledTracks);
         var tempIndex = enabledTracks.indexOf(currentTrackID);
-        var tempTrackArray = enabledTracks.filter((_, index) => index !== tempIndex);                   
+        var tempTrackArray = tempIndex !== -1 
+            ? enabledTracks.filter((_, index) => index !== tempIndex) 
+            : enabledTracks.slice(); // If not found, use a copy of enabledTracks
         selectedTrackID = tempTrackArray[Math.floor(Math.random() * tempTrackArray.length)];      // Select new, different track
     }
-    console.log(currentTrackID);
-    console.log(selectedTrackID);
+    console.log("Current track: " + currentTrackID);
+    console.log("New Track: " + selectedTrackID);
     
     //FadeOut
     var setVolume = volumeSlider.value;
@@ -325,6 +331,7 @@ function swapTracks(){
     function()
     {
         currentTrack.volume = 0;
+        currentTrack.pause();                               // Pause current track
     });
     
     // Fade In

@@ -258,7 +258,7 @@ checkboxes.forEach(function(checkbox) {
         clearTimeout(swapEvent);
         var tempSwapTime = getRandomTime(currentTrackID);
         console.log("swapEvent Enabled");
-        console.log("With swap time = " + tempSwapTime);
+        console.log("With swap time = " + tempSwapTime/60000);
         swapEvent = setTimeout(swapTracks, tempSwapTime);
     }
     if((lastCountCheckbox==2 && enabledTracks.length==1) && currentTrackID == enabledTracks[0]){
@@ -285,7 +285,7 @@ swapper.addEventListener("click", ()=>{
         if(enabledTracks.length>1){
             var tempSwapTime = getRandomTime(currentTrackID);
             console.log("swapEvent Enabled");
-            console.log("With swap time = " + tempSwapTime);
+            console.log("With swap time = " + tempSwapTime/60000);
             swapEvent = setInterval(swapTracks, tempSwapTime);
         }
 
@@ -322,7 +322,6 @@ function swapTracks(){
     //FadeOut
     var setVolume = volumeSlider.value;
     var selectedTrack = trackList[selectedTrackID];
-    currentTrack = trackList[currentTrackID];
     doTimer(2000, 10, function()
     {
         setVolume = Math.max(setVolume - setVolume/20,0);
@@ -336,6 +335,9 @@ function swapTracks(){
     
     // Fade In
     var newVolume = 0;
+    selectedTrack.volume = 0;                               // Set new track volume to 0
+    selectedTrack.currentTime = currentTrack.currentTime;
+    selectedTrack.play();                                   // Play new track
     doTimer(2000, 10, function()
     {
         newVolume = newVolume + volumeSlider.value/20;
@@ -351,7 +353,7 @@ function swapTracks(){
     if(enabledTracks.length>1){
         var tempSwapTime = getRandomTime(currentTrackID);
         console.log("swapEvent Enabled")
-        console.log("With swap time = " + tempSwapTime);
+        console.log("With swap time = " + tempSwapTime/60000);
         swapEvent = setTimeout(swapTracks, tempSwapTime);     // Start a swap event timer
     }
 }
@@ -371,7 +373,7 @@ function readSlider(sliderSel, rsTrackID){
             console.log("song is currently playing so")
             var tempSwapTime = getRandomTime(currentTrackID);
             console.log("swapEvent Enabled");
-            console.log("With swap time = " + tempSwapTime);       
+            console.log("With swap time = " + tempSwapTime/60000);       
             swapEvent = setInterval(swapTracks, tempSwapTime) ;
         }
     }
@@ -383,11 +385,11 @@ function readSlider(sliderSel, rsTrackID){
 // debug reporter
 function debugReport(){
     console.log("-------------------------------");
-    console.log("Debug Report  : " + debugCounter);
-    console.log(`Swap time     : ${sTimeL[0]}  ${sTimeL[1]}  ${sTimeL[2]}  ${sTimeL[3]}  ${sTimeL[4]}`);
+    console.log("Debug Report  (min): " + debugCounter);
+    console.log(`Swap time     (min): ${sTimeL[0]/60000}  ${sTimeL[1]/60000}  ${sTimeL[2]/60000}  ${sTimeL[3]/60000}  ${sTimeL[4]/60000}`);
     console.log("Current Volume: " + volumeSlider.value);
     console.log("-------------------------------");
-    debugCounter += debugTimer;
+    debugCounter += debugTimer/60;
 }
 
 
